@@ -1,0 +1,2 @@
+# doutrinaSS
+Detecta root scanner 
