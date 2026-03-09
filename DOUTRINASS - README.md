@@ -2,111 +2,176 @@
 
 clear
 
-BLUE="\033[1;34m"
 GREEN="\033[1;32m"
-CYAN="\033[1;36m"
+RED="\033[1;31m"
 NC="\033[0m"
 
 score=0
+checks=0
 
-line(){
-printf "${BLUE}════════════════════════════════════════════════════${NC}\n"
+line() {
+  printf "${GREEN}══════════════════════════════════════════════════════════════${NC}\n"
 }
 
-check(){
-printf "${CYAN}%-40s${NC}" "$1"
-sleep 0.3
+check() {
+  checks=$((checks+1))
+  printf "${GREEN}%-50s${NC}" "$1"
 }
 
-ok(){
-printf "${GREEN} ✔ NORMAL${NC}\n"
+ok() {
+  printf "${GREEN}✔ LIMPO${NC}\n"
 }
 
-det(){
-printf "${BLUE} ✘ ANORMAL${NC}\n"
-score=$((score+1))
+sus() {
+  printf "${RED}✘ SUSPEITO${NC}\n"
+  score=$((score+1))
 }
 
-scan(){
-for i in 10 20 30 40 50 60 70 80 90 100
+crit() {
+  printf "${RED}✘ CRÍTICO${NC}\n"
+  score=$((score+3))
+}
+
+################################
+# CABEÇALHO
+################################
+
+line
+printf "${GREEN}D O U T R I N A   F O R E N S E\n${NC}"
+printf "${GREEN}Scanner de Segurança Android\n${NC}"
+line
+
+################################
+# BINÁRIOS
+################################
+
+for f in \
+/system/bin/su /system/xbin/su /sbin/su \
+/system/bin/magisk /system/xbin/magisk \
+/system/bin/ksu /data/adb/ksu \
+/system/bin/apatch /data/adb/apatch/apd \
+/system/bin/daemonsu \
+/system/app/Superuser.apk /system/app/SuperSU.apk
 do
-printf "\r${CYAN}Scanning system modules [%s%%]${NC}" "$i"
-sleep 0.07
+  check "Binário $f"
+  [ -f "$f" ] && crit || ok
 done
-printf "\n"
-}
 
-# HEADER
-line
-printf "${GREEN}        ANDROID ROOT / BOOT / BUGREPORT SCANNER\n"
-line
+################################
+# DIRETÓRIOS
+################################
 
-scan
+for d in \
+/data/adb /data/adb/magisk /data/adb/modules \
+/data/adb/service.d /data/adb/post-fs-data.d \
+/data/adb/ksu /data/adb/susfs /data/adb/apatch \
+/data/adb/zygisk /data/adb/lspd \
+/sbin/.magisk /debug_ramdisk/.magisk
+do
+  check "Diretório $d"
+  [ -d "$d" ] && sus || ok
+done
 
-line
+################################
+# PROCESSOS
+################################
 
-# SU BINARY
-check "Checking su binary"
-if [ -f /system/bin/su ] || [ -f /system/xbin/su ]; then
-det
-else
-ok
-fi
+for p in magisk magiskd zygisk ksu ksud apatch daemonsu frida lsposed
+do
+  check "Processo $p"
+  ps -A 2>/dev/null | grep -w "$p" | grep -v grep >/dev/null && sus || ok
+done
 
-# BUSYBOX
-check "Checking busybox"
-command -v busybox >/dev/null 2>&1 && det || ok
+################################
+# LEAKS IMPORTANTES
+################################
 
-# MAGISK
-check "Searching Magisk files"
-[ -d /data/adb ] && det || ok
+check "Socket Magisk (/dev/socket/magisk*)"
+ls /dev/socket/magisk* >/dev/null 2>&1 && crit || ok
 
-# KERNELSU
-check "KernelSU module"
-ls /sys/module 2>/dev/null | grep -i ksu >/dev/null && det || ok
+################################
+# PROPRIEDADES
+################################
 
-# OVERLAYFS
-check "OverlayFS mount"
-mount | grep overlay >/dev/null && det || ok
+check "Build test-keys"
+getprop ro.build.tags | grep -q test-keys && crit || ok
 
-# FRIDA
-check "Frida process"
-ps -A 2>/dev/null | grep frida >/dev/null && det || ok
+check "Debuggable"
+getprop ro.debuggable | grep -q 1 && sus || ok
 
-# XPOSED / LSPOSED
-check "Xposed / LSPosed modules"
-ps -A 2>/dev/null | grep -iE "xposed|lsposed" >/dev/null && det || ok
+check "ADB root"
+getprop service.adb.root | grep -q 1 && sus || ok
 
-# KERNEL SYMBOLS
-check "Kernel symbols"
-cat /proc/kallsyms 2>/dev/null | grep -i su >/dev/null && det || ok
+################################
+# BOOTLOADER E VERIFIED
+################################
 
-# KERNEL MODULES
-check "Kernel modules"
-cat /proc/modules 2>/dev/null | grep -i su >/dev/null && det || ok
+check "Bootloader"
+getprop ro.boot.flash.locked | grep -q 0 && crit || ok
 
-line
+check "Verified Boot"
+getprop ro.boot.verifiedbootstate | grep -q green && ok || sus
 
+check "dm-verity"
+getprop ro.boot.veritymode | grep -q enforcing && ok || sus
+
+check "SELinux"
+getenforce | grep -q Enforcing && ok || crit
+
+################################
+# MOUNTS
+################################
+
+check "/system RW"
+mount | grep " /system " | grep rw >/dev/null && crit || ok
+
+check "Magisk traces in mount"
+mount | grep -qi magisk && sus || ok
+
+################################
+# FRIDA E EMULADOR
+################################
+
+check "Frida"
+ps -A | grep -qi frida && crit || ok
+
+check "Emulador"
+getprop ro.kernel.qemu | grep -q 1 && sus || ok
+
+################################
+# ADB WIFI
+################################
+
+check "ADB WiFi 5555"
+getprop service.adb.tcp.port | grep -q 5555 && sus || ok
+
+################################
 # RESULTADO
-if [ "$score" -ge 5 ]; then
-printf "${BLUE}HIGH ROOT INDICATION (%s indicators)${NC}\n" "$score"
-elif [ "$score" -ge 2 ]; then
-printf "${CYAN}MEDIUM ROOT INDICATION (%s indicators)${NC}\n" "$score"
-else
-printf "${GREEN}LOW ROOT INDICATION (%s indicators)${NC}\n" "$score"
-fi
+################################
 
 line
 
-# ASCII DOUTRINA
-printf "${GREEN}\n"
-printf "██████╗  ██████╗ ██╗   ██╗████████╗██████╗ ██╗███╗   ██╗ █████╗\n"
-printf "██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔══██╗██║████╗  ██║██╔══██╗\n"
-printf "██║  ██║██║   ██║██║   ██║   ██║   ██████╔╝██║██╔██╗ ██║███████║\n"
-printf "██║  ██║██║   ██║██║   ██║   ██║   ██╔══██╗██║██║╚██╗██║██╔══██║\n"
-printf "██████╔╝╚██████╔╝╚██████╔╝   ██║   ██║  ██║██║██║ ╚████║██║  ██║\n"
-printf "╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝\n"
-printf "\n        SCREEN SHARE TOOL\n"
-printf "${NC}"
+if [ "$score" -gt 10 ]; then
+  printf "${RED}DISPOSITIVO COMPROMETIDO (%s pontos)${NC}\n" "$score"
+elif [ "$score" -gt 3 ]; then
+  printf "${RED}ALTERAÇÕES DETECTADAS (%s)${NC}\n" "$score"
+else
+  printf "${GREEN}PARECE LIMPO (%s)${NC}\n" "$score"
+fi
 
+printf "${GREEN}Verificações: %s${NC}\n" "$checks"
+
+line
+
+printf "${GREEN}"
+cat << "EOF"
+██████╗  ██████╗ ██╗   ██╗████████╗██████╗ ██╗███╗   ██╗ █████╗
+██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔══██╗██║████╗  ██║██╔══██╗
+██║  ██║██║   ██║██║   ██║   ██║   ██████╔╝██║██╔██╗ ██║███████║
+██║  ██║██║   ██║██║   ██║   ██║   ██╔══██╗██║██║╚██╗██║██╔══██║
+██████╔╝╚██████╔╝╚██████╔╝   ██║   ██║  ██║██║██║ ╚████║██║  ██║
+╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝
+EOF
+
+printf "DOUTRINA FORENSE${NC}\n"
 line
