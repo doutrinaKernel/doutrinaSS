@@ -1,140 +1,112 @@
-#!/bin/bash
+#!/system/bin/sh
 
 clear
 
+BLUE="\033[1;34m"
 GREEN="\033[1;32m"
-RED="\033[1;31m"
-YELLOW="\033[1;33m"
-RESET="\033[0m"
+CYAN="\033[1;36m"
+NC="\033[0m"
 
 score=0
 
-check(){
-printf "%-50s" "$1"
-sleep 0.2
+line(){
+printf "${BLUE}════════════════════════════════════════════════════${NC}\n"
 }
 
-det(){
-echo -e "${RED}DETECTADO${RESET}"
-score=$((score+1))
+check(){
+printf "${CYAN}%-40s${NC}" "$1"
+sleep 0.3
 }
 
 ok(){
-echo -e "${GREEN}OK${RESET}"
+printf "${GREEN} ✔ NORMAL${NC}\n"
 }
 
-echo -e "${GREEN}"
-echo "======================================================"
-echo "        ANDROID ROOT / BOOT / BUGREPORT SCANNER"
-echo "======================================================"
-echo -e "${RESET}"
+det(){
+printf "${BLUE} ✘ ANORMAL${NC}\n"
+score=$((score+1))
+}
 
-sleep 1
+scan(){
+for i in 10 20 30 40 50 60 70 80 90 100
+do
+printf "\r${CYAN}Scanning system modules [%s%%]${NC}" "$i"
+sleep 0.07
+done
+printf "\n"
+}
 
-# -------- SYSTEM CHECKS --------
+# HEADER
+line
+printf "${GREEN}        ANDROID ROOT / BOOT / BUGREPORT SCANNER\n"
+line
 
+scan
+
+line
+
+# SU BINARY
 check "Checking su binary"
-command -v su >/dev/null && det || ok
+if [ -f /system/bin/su ] || [ -f /system/xbin/su ]; then
+det
+else
+ok
+fi
 
+# BUSYBOX
 check "Checking busybox"
-command -v busybox >/dev/null && det || ok
+command -v busybox >/dev/null 2>&1 && det || ok
 
+# MAGISK
 check "Searching Magisk files"
-[ -d /data/adb ] || [ -f /sbin/magiskinit ] && det || ok
+[ -d /data/adb ] && det || ok
 
+# KERNELSU
 check "KernelSU module"
 ls /sys/module 2>/dev/null | grep -i ksu >/dev/null && det || ok
 
+# OVERLAYFS
 check "OverlayFS mount"
 mount | grep overlay >/dev/null && det || ok
 
+# FRIDA
 check "Frida process"
-ps -A | grep frida | grep -v grep >/dev/null && det || ok
+ps -A 2>/dev/null | grep frida >/dev/null && det || ok
 
+# XPOSED / LSPOSED
 check "Xposed / LSPosed modules"
-[ -d /data/adb/modules ] && ls /data/adb/modules | grep -iE "xposed|lsposed|riru" >/dev/null && det || ok
+ps -A 2>/dev/null | grep -iE "xposed|lsposed" >/dev/null && det || ok
 
+# KERNEL SYMBOLS
 check "Kernel symbols"
-cat /proc/kallsyms 2>/dev/null | grep -iE "ksu|magisk" >/dev/null && det || ok
+cat /proc/kallsyms 2>/dev/null | grep -i su >/dev/null && det || ok
 
+# KERNEL MODULES
 check "Kernel modules"
-cat /proc/modules 2>/dev/null | grep -iE "ksu|magisk" >/dev/null && det || ok
+cat /proc/modules 2>/dev/null | grep -i su >/dev/null && det || ok
 
-# -------- BOOT IMAGE CHECK --------
+line
 
-BOOTIMG="boot.img"
-
-if [ -f "$BOOTIMG" ]; then
-
-echo ""
-echo "---------- BOOT IMAGE ANALYSIS ----------"
-
-check "Scanning boot.img for Magisk"
-strings "$BOOTIMG" | grep -i magisk >/dev/null && det || ok
-
-check "Scanning boot.img for Zygisk"
-strings "$BOOTIMG" | grep -i zygisk >/dev/null && det || ok
-
-check "Scanning boot.img for KernelSU"
-strings "$BOOTIMG" | grep -i ksu >/dev/null && det || ok
-
-check "Scanning boot.img for Frida"
-strings "$BOOTIMG" | grep -i frida >/dev/null && det || ok
-
-check "Scanning boot.img for Xposed"
-strings "$BOOTIMG" | grep -i xposed >/dev/null && det || ok
-
-fi
-
-# -------- BUGREPORT CHECK --------
-
-BUG="bugreport.txt"
-
-if [ -f "$BUG" ]; then
-
-echo ""
-echo "---------- BUGREPORT ANALYSIS ----------"
-
-check "Bugreport: magisk traces"
-grep -i magisk "$BUG" >/dev/null && det || ok
-
-check "Bugreport: frida traces"
-grep -i frida "$BUG" >/dev/null && det || ok
-
-check "Bugreport: xposed traces"
-grep -i xposed "$BUG" >/dev/null && det || ok
-
-check "Bugreport: su execution"
-grep -i " su " "$BUG" >/dev/null && det || ok
-
-check "Bugreport: overlayfs"
-grep -i overlay "$BUG" >/dev/null && det || ok
-
-fi
-
-echo ""
-echo "======================================================"
-
-if [ "$score" -ge 6 ]; then
-echo -e "${RED}ROOT VERY LIKELY ($score indicators)${RESET}"
-elif [ "$score" -ge 3 ]; then
-echo -e "${YELLOW}POSSIBLE ROOT ($score indicators)${RESET}"
+# RESULTADO
+if [ "$score" -ge 5 ]; then
+printf "${BLUE}HIGH ROOT INDICATION (%s indicators)${NC}\n" "$score"
+elif [ "$score" -ge 2 ]; then
+printf "${CYAN}MEDIUM ROOT INDICATION (%s indicators)${NC}\n" "$score"
 else
-echo -e "${GREEN}LOW ROOT INDICATION ($score indicators)${RESET}"
+printf "${GREEN}LOW ROOT INDICATION (%s indicators)${NC}\n" "$score"
 fi
 
-echo "======================================================"
-echo ""
+line
 
-# -------- FINAL SIGNATURE --------
+# ASCII DOUTRINA
+printf "${GREEN}\n"
+printf "██████╗  ██████╗ ██╗   ██╗████████╗██████╗ ██╗███╗   ██╗ █████╗\n"
+printf "██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔══██╗██║████╗  ██║██╔══██╗\n"
+printf "██║  ██║██║   ██║██║   ██║   ██║   ██████╔╝██║██╔██╗ ██║███████║\n"
+printf "██║  ██║██║   ██║██║   ██║   ██║   ██╔══██╗██║██║╚██╗██║██╔══██║\n"
+printf "██████╔╝╚██████╔╝╚██████╔╝   ██║   ██║  ██║██║██║ ╚████║██║  ██║\n"
+printf "╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝\n"
+printf "\n        SCREEN SHARE TOOL\n"
+printf "${NC}"
 
-echo -e "${GREEN}"
-echo "██████╗  ██████╗ ██╗   ██╗████████╗██████╗ ██╗███╗   ██╗ █████╗ "
-echo "██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔══██╗██║████╗  ██║██╔══██╗"
-echo "██║  ██║██║   ██║██║   ██║   ██║   ██████╔╝██║██╔██╗ ██║███████║"
-echo "██║  ██║██║   ██║██║   ██║   ██║   ██╔══██╗██║██║╚██╗██║██╔══██║"
-echo "██████╔╝╚██████╔╝╚██████╔╝   ██║   ██║  ██║██║██║ ╚████║██║  ██║"
-echo "╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝"
-echo ""
-echo "        BY: DOUTRINA SCREEN SHARE"
-echo -e "${RESET}"
+line
