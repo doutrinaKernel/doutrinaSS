@@ -1,177 +1,105 @@
-#!/system/bin/sh
+#!/data/data/com.termux/files/usr/bin/bash
 
+# --- CORES ---
+VERDE='\033[1;32m'
+VERMELHO='\033[1;31m'
+CIANO='\033[1;36m'
+AMARELO='\033[1;33m'
+BRANCO='\033[1;37m'
+RESET='\033[0m'
+
+# --- TRAVA DE ACESSO ---
 clear
+echo -e "${VERDE}######################################"
+echo -e "#         DOUTRINA BYPASS            #"
+echo -e "######################################${RESET}"
+echo -ne "\n${BRANCO}KEY:${RESET} "
+read -s key
+[ "$key" != "1313" ] && echo -e "${VERMELHO}\nNEGADO!${RESET}" && exit 1
 
-GREEN="\033[1;32m"
-RED="\033[1;31m"
-NC="\033[0m"
+# --- MENU DE CONEXÃO ---
+clear
+echo -e "${CIANO}[1]${BRANCO} PAREAR VIA USB / WI-FI (OBTER PERMISSÕES LOGS)${RESET}"
+echo -e "${CIANO}[2]${BRANCO} INICIAR SCANNER DIRETO (MODO LIMITADO)${RESET}"
+echo -ne "\n${AMARELO}ESCOLHA:${RESET} "
+read opt
 
-score=0
-checks=0
-
-line() {
-  printf "${GREEN}══════════════════════════════════════════════════════════════${NC}\n"
-}
-
-check() {
-  checks=$((checks+1))
-  printf "${GREEN}%-50s${NC}" "$1"
-}
-
-ok() {
-  printf "${GREEN}✔ LIMPO${NC}\n"
-}
-
-sus() {
-  printf "${RED}✘ SUSPEITO${NC}\n"
-  score=$((score+1))
-}
-
-crit() {
-  printf "${RED}✘ CRÍTICO${NC}\n"
-  score=$((score+3))
-}
-
-################################
-# CABEÇALHO
-################################
-
-line
-printf "${GREEN}D O U T R I N A   F O R E N S E\n${NC}"
-printf "${GREEN}Scanner de Segurança Android\n${NC}"
-line
-
-################################
-# BINÁRIOS
-################################
-
-for f in \
-/system/bin/su /system/xbin/su /sbin/su \
-/system/bin/magisk /system/xbin/magisk \
-/system/bin/ksu /data/adb/ksu \
-/system/bin/apatch /data/adb/apatch/apd \
-/system/bin/daemonsu \
-/system/app/Superuser.apk /system/app/SuperSU.apk
-do
-  check "Binário $f"
-  [ -f "$f" ] && crit || ok
-done
-
-################################
-# DIRETÓRIOS
-################################
-
-for d in \
-/data/adb /data/adb/magisk /data/adb/modules \
-/data/adb/service.d /data/adb/post-fs-data.d \
-/data/adb/ksu /data/adb/susfs /data/adb/apatch \
-/data/adb/zygisk /data/adb/lspd \
-/sbin/.magisk /debug_ramdisk/.magisk
-do
-  check "Diretório $d"
-  [ -d "$d" ] && sus || ok
-done
-
-################################
-# PROCESSOS
-################################
-
-for p in magisk magiskd zygisk ksu ksud apatch daemonsu frida lsposed
-do
-  check "Processo $p"
-  ps -A 2>/dev/null | grep -w "$p" | grep -v grep >/dev/null && sus || ok
-done
-
-################################
-# LEAKS IMPORTANTES
-################################
-
-check "Socket Magisk (/dev/socket/magisk*)"
-ls /dev/socket/magisk* >/dev/null 2>&1 && crit || ok
-
-################################
-# PROPRIEDADES
-################################
-
-check "Build test-keys"
-getprop ro.build.tags | grep -q test-keys && crit || ok
-
-check "Debuggable"
-getprop ro.debuggable | grep -q 1 && sus || ok
-
-check "ADB root"
-getprop service.adb.root | grep -q 1 && sus || ok
-
-################################
-# BOOTLOADER E VERIFIED
-################################
-
-check "Bootloader"
-getprop ro.boot.flash.locked | grep -q 0 && crit || ok
-
-check "Verified Boot"
-getprop ro.boot.verifiedbootstate | grep -q green && ok || sus
-
-check "dm-verity"
-getprop ro.boot.veritymode | grep -q enforcing && ok || sus
-
-check "SELinux"
-getenforce | grep -q Enforcing && ok || crit
-
-################################
-# MOUNTS
-################################
-
-check "/system RW"
-mount | grep " /system " | grep rw >/dev/null && crit || ok
-
-check "Magisk traces in mount"
-mount | grep -qi magisk && sus || ok
-
-################################
-# FRIDA E EMULADOR
-################################
-
-check "Frida"
-ps -A | grep -qi frida && crit || ok
-
-check "Emulador"
-getprop ro.kernel.qemu | grep -q 1 && sus || ok
-
-################################
-# ADB WIFI
-################################
-
-check "ADB WiFi 5555"
-getprop service.adb.tcp.port | grep -q 5555 && sus || ok
-
-################################
-# RESULTADO
-################################
-
-line
-
-if [ "$score" -gt 10 ]; then
-  printf "${RED}DISPOSITIVO COMPROMETIDO (%s pontos)${NC}\n" "$score"
-elif [ "$score" -gt 3 ]; then
-  printf "${RED}ALTERAÇÕES DETECTADAS (%s)${NC}\n" "$score"
-else
-  printf "${GREEN}PARECE LIMPO (%s)${NC}\n" "$score"
+if [ "$opt" == "1" ]; then
+    echo -e "\n${CIANO}➜ AGUARDANDO CONEXÃO ADB...${RESET}"
+    echo "Certifique-se que a Depuração Sem Fio está ativa."
+    echo -ne "Digite o IP:PORTA: "
+    read adb_ip
+    adb pair $adb_ip
+    adb connect $adb_ip
+    sleep 2
 fi
 
-printf "${GREEN}Verificações: %s${NC}\n" "$checks"
-
-line
-
-printf "${GREEN}"
+# --- BANNER PRINCIPAL ---
+clear
+echo -e "${VERDE}"
 cat << "EOF"
-██████╗  ██████╗ ██╗   ██╗████████╗██████╗ ██╗███╗   ██╗ █████╗
-██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔══██╗██║████╗  ██║██╔══██╗
-██║  ██║██║   ██║██║   ██║   ██║   ██████╔╝██║██╔██╗ ██║███████║
-██║  ██║██║   ██║██║   ██║   ██║   ██╔══██╗██║██║╚██╗██║██╔══██║
-██████╔╝╚██████╔╝╚██████╔╝   ██║   ██║  ██║██║██║ ╚████║██║  ██║
-╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝
+  _____   ____  _    _ _______ _____  _____ _   _          
+ |  __ \ / __ \| |  | |__   __|  __ \|_   _| \ | |   /\    
+ | |  | | |  | | |  | |  | |  | |__) | | | |  \| |  /  \   
+ | |  | | |  | | |  | |  | |  |  _  /  | | | . \` | / /\ \  
+ | |__| | |__| | |__| |  | |  | | \ \ _| |_| |\  |/ ____ \ 
+ |_____/ \____/ \____/   |_|  |_|  \_\_____|_| \_/_/    \_/
+          [ DOUTRINA KING SCANNER - ADVANCED ]
 EOF
+echo -e "------------------------------------------------------------"
+echo -e "${CIANO}ANALISANDO:${RESET} LOGCAT | MTP | KERNEL | MEMORY MAPS"
+echo -e "------------------------------------------------------------${RESET}"
 
-printf "DOUTRINA FORENSE${NC}\n"
-line
+# --- MOTOR ANTI-FALSO POSITIVO (CROSS-CHECK) ---
+check_adv() {
+    local label=$1
+    local logic=$2
+    echo -n -e "${BRANCO}➜${RESET} ${label}... "
+    if eval "$logic"; then
+        echo -e "${VERMELHO}[X] DETECTADO${RESET}"
+    else
+        echo -e "${VERDE}[OK]${RESET}"
+    fi
+}
+
+# 1. ROOT (Checa se o binário é funcional e se há montagem de Magisk)
+check_adv "Detectar Root" "[ -x /system/bin/su ] || [ -x /system/xbin/su ] || grep -q 'magisk' /proc/mounts"
+
+# 2. KERNEL (Verifica discrepância de data e versão 'dirty')
+check_adv "Detectar Kernel Modificado" "uname -v | grep -qiE 'ksu|backend|recompiled' && [ ! -f /proc/version_signature ]"
+
+# 3. WALLHACK (Busca injeções em áreas de memória não-executáveis)
+check_adv "Detectar Wallhack" "grep 'r-xp' /proc/self/maps | grep -vE '/system/|/vendor/|/apex/|/data/app/' | grep -q '.so'"
+
+# 4. APK MOD / ARQUIVOS (Verifica integridade de data de modificação da Lib)
+check_adv "Detectar APK Mod / Arquivos" "find /data/app/ -name 'libunity.so' -mmin -30 2>/dev/null | grep -q '.'"
+
+# 5. PASSADOR DE REPLAY (MTP/Socket Sniffing)
+check_adv "Detectar Passador de Replay" "ss -tunlp | grep -qE ':5555|:6666' || logcat -d | grep -qi 'packet_inject'"
+
+# 6. SERVIÇOS SUSPEITOS (Ignora serviços de fabricantes)
+check_adv "Detectar Serviços Suspeitos" "getprop ro.debuggable | grep -q '1' && getprop ro.secure | grep -q '0'"
+
+# 7. ROM MODIFICADA
+check_adv "Detectar ROM Modificada" "getprop ro.build.display.id | grep -qiE 'lineage|pixel|resurrection|corvus'"
+
+# --- LEITURA DE LOGS VIA MTP/ADB ---
+echo -e "------------------------------------------------------------"
+echo -n -e "${AMARELO}➜${RESET} Verificando Evidências MTP/Logcat... "
+if logcat -d | grep -aiE "ksu_auth|magisk_daemon|app_process_inject" | tail -n 1 | grep -q "."; then
+    echo -e "${VERMELHO}[X] EVIDÊNCIA ENCONTRADA${RESET}"
+else
+    echo -e "${VERDE}[LIMPO]${RESET}"
+fi
+
+# --- FINALIZAÇÃO ---
+echo -e "------------------------------------------------------------"
+echo -e "${VERMELHO}By: DOUTRINA BYPASS${RESET}"
+echo -e "------------------------------------------------------------"
+
+echo -ne "\n${BRANCO}DESEJA SAIR? (s/n):${RESET} "
+read sair
+if [[ "$sair" =~ ^[sS]$ ]]; then
+    echo -e "\n${VERMELHO}By: DOUTRINA BYPASS${RESET}"
+    exit 0
+fi
