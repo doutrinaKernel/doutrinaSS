@@ -1,6 +1,209 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# CRÉDITOS: DOUTRINA • CHAPOLIN • VERSATY
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <filesystem>
+#include <thread>
+#include <chrono>
+#include <cstdio>
+#include <memory>
+#include <array>
 
-import zlib, base64
-exec(zlib.decompress(base64.b64decode("eJy1O8tu40iSd39FFmt6JHVbkt3d1dOjhhugJbrMLUnUinJVdbk8Ai2mJMIUyebDsss2sIM9LGaBAXYP8wE7c1hggT3uF/hP5ks2IpOPJEVJfg2r2yIzMyIjIyLjkQy+ftWMAr95bjlN6lwS7zqcu853O69J/es6mbim5cxaJAqn9R+xBdrbw/s/ddSRprdIRzsZDdW+TP7+L38l7WN5oHXVPnt4rwx1efTLDozvah15+I6MFLlHjoaKQupE7ryX+22lQ4aaNiK/JR/kbvdYbr8jHWWktEeq1if6L/pI6QF4T+soXQ164k75/t/u/1Ujut5WWzhNT+kea6QKVP15pLa12i6Re/IQQapyVxmOZGhpq/1PMqmq/SOttrNjLTzXD0kQnXu+O6FBkLZcp7c+3Zn67oKYRkhDa0FJ3J48896QXoWRYTcMz0sGyJ4H87nwENAhDSI7zA+duE5oWA71gwSinbTkBy4tc0bDdNQxNUzq75Ij1w3xt2ucU3uXDK3JvOvOdsnAd2c+rOXQiPH40NNAZAmGEdyjPA6SC8RwSI5O+ozheta+Y9IpMczz6mRh1lo7BK7Qv+Y3ePlsWeRA4GDDj5zqVAIgEsypbZPKDQDfVci3PzdNetl0ItuWdnnfwciP6C6ZGF4Y+XTsRqEXhXEj0pvcApeh7+BNTZgYIJx4/kYQmtAPP77lVfkgejWhXtgqAkjSTrKmcUiD8B+5sHXU8ifYTxQYTfY2kXtk2AHNKLatfyzF20SxsqJTm0xdn9jEWiOLRuDZVlitfHYqNWJNiX22abmnZ3ytkzmdXIxR7+KVrlscWxssxYKWJ6zEhr0WANatpJ/utzjhbLUAhQtm0NkaYHUVTkol6SWGY5JK5BgRWFLf+kLNCnHcMOnOYAUeYEc6dQhT753tCN1916H5rdtXPmTGUidyu60NO2r/LRmBaRwobXE7C9xdGrY9N+DmgvoOtRNOmzSkk9ByHeTLKZ/amLm+AY+JxWs47hL5E/pTfKxKXx23vuq1vtIlzlb2xzPCeTAO3XEQGii503SxUhOsa5NP29TnaMxAeOXdroe0GHauHzVAHBSU4ABajabtTgy7GS680mkKQ0qnwm0SzBfpFKzrLFsl6gOuFEWaW3FOL1JrM5VOSZ3CPsSxsBHPpFpeCRAUVRYYhuo/lRj30vHixq3lAGEW6Q1cElKSYgHqpN/DlWvNz5gXOvov6pjVqlRwxHJHI69gi00lFUyXE4Aluv8fZ2IZhC4IJw+8aqfZj2yXICFNnJdQHBz6humC4jMKaoCEKVRNUBYwS2y/8FVLE1gzl3LSsbrw3IKTYbn1xo05SUhckGJ/w3aX1K/WGHCqBCUD8nx7BM+kgeHf/3VBQx9YEAUetULGjoRqYM47pskF1iSXuP+zaflm5s9j4LLD28e2Ows27eYLer10fTPI70ngu0nPo9kMgjwk+UQ/zD33Qk+n/iWwDh4WoQfOx3CCKXvOsETBOZIytWbxsLELrEnufWpTI6D4eBQ5jK4pmm2cnA8sbi9YC+jCOLHTTDl4G6mbpH7JQgPydes9uSUQ83ikbimkAnPdAiW3MLwCHRBS2aTukO/2RPuEzkjAngk3Z+KFEaI/yKtCrLrccgsxiGgBnOvqxTJVtdgBpM8458USmxPp1FZ36cIIJ/MxWzG6rAZ7rvqVP3w2b769q7O/n4NvquymJfytVXbZdLUVlOCVDFQYQJhhb8x8N/Kq+8xhC5NSiEUe7AO2bZW21lc+YvSebBVZ4kTupkTVVjGxBlQytCSpuYDgGIyFh0F7AzobrDOmI9PIdaNjfc2sCqgP2/7ZPGgZADbfmgnosf5xHU/0kTw60QlsPSKP1PcaM7cKTGa6LXKTTnwHOt1mRMetfAV3JdZjneUQ44dDWVd49pWlXNWjodaDPK036MojpVZMCMBAWgEdx5GYG+TDNCA3NjesEdJEbThUeK623yLKglzSL0AOsNLwyefTXbxZAEz96JJUTivgSIGdiDzyYYBpwQKMBXVQEOTch5iFhmRqXbm7BMKtEGIsFzr0a8idrj4YvgMWK3EqQIbkAWKZ1F3iWeZuFEDGZPizQPQoifGo/MGHlKqS2pKYnFsyh4yL1PffcPuEg9jaE5OEEXmiPVlnuUXJ+tfbEzRNgi1ZtQQZnzPlQQnGWygBBEVYZUTJuusWqZxHwfW5e1XhS4yfStYX95QvLu584ZUdnui/HGofn7G4L079y/XMCi7qE0jHDQc2wQ/fx0v94jBxlCw17immWHniPv3yVtXfAW3x6MeQ5dnGtQVqPfOt8BoUOqbIs6brSEq6NtM0UI+AoGRsQlEuCUWAXADhLcYR7BwwMPaL5QLcACdYqTn2YO8as8yVewuCKS1J2+tRgVcBhQQqaMYDWs3mrJJY6odjfQjKAs6AsmyThtXVeUT15rSAKwnpArhNQYqMkFMJNK0R0EkD4xt2byyCyJmlz2C2fNcy2bN4j30z153ZtFFs/jUybPhdNKTYtLLs42LG3FIJm8v3IQIc4N+VWAUUDLNT6MpvTAzhLSeiO9nIYMzXjDyH0IZjM/wwWFrhvMoZwcMafs/yjzyXcvMiUXFmnBcCZtCsI50RW2zq4Jw18jN5sz0sH/TISV/tg3vtdnFjXMwyT7kptp64QAbsjaz9RXdGmoGbeLh3sC4vTyUdWh64PBhs2PM4TEJ+5dBkzChhRAmChANikirZwcI1U0P1K+yWKJgG318EUUXMV8tYzfMYop/oRzpLG7TOSVcTMQgpoVQQwxOzQMA6ZvjLs76HkDmQh3JPGQ2B0hRbJYYsITTHLZ7RM8IE2LPHcqqj6gNNVzHuW8W2nmdFUqYIjAcb0NpcGOj0IMuYPYCgHhtMupA+soQthX3o7EJiFsQJrX5SML5xJCUqV+OBSgW4EtowxRWoCopkgTPL7dBSH1fYV8wqJHsqh+ABeyoFLmXM+iDg1/XByRaeDCB2IGoSPJAj6woZk6QNeW7AFhpD5h4AhtW9FXcI++mDZZtsK4mAD5EQUvBB7XYImA9rak3yCpOg3//97/aehJ6MwIyC8BYeTvRJGeL5Sp0wfIUlLyFVcgyvmPL5buMc4u/GEnJE6P7nw2zVCQR6l+T+FQRwe9Jm0o4sf7E0fEp07t9ZztY+0UeQP9XJTYzqrkigmBS1yElo2dYXyHVAIRQ8UIsTJNQPlgyxTImpjE9n9IoAG2B6CxIfSpz7v7noZScWDjLhfxpMDI8ins+3m7ZpuUYqoJJMH2/hxw3pVlX8xEajTNT+PyltWWPZq7zRVmyJ0QRa7ADfn5m3V+xnKzFdfYDjmh/ZcHbUhKb9gzZ8RwZDRVf6I2UzZRs2q8Lcg3nLbeN2Yo4t06QOvpDDPBmJQfDYLJugjiYmr9tMupkz6a4Z2TRonvvUoWDVye0tWTfmcKj0lQdYfjaO9BgUFyOGSrC7VnfvdsIET791Yub8vn+nnzx71pVUavvkkCVtWfPq9JnZDKg9BUF6azSXVPzllbdVQVSHxTXHrsv2D8KsjzqcYOxZZmLTfPCkAHwh0uMEzYUTxkYNhluOFa4Zv58fjKE/R88C7hg0vsdmsIVx65YVBa4NAbBJ+gYYa9jelIeBPS07XtpsDEfsYNn1F2DJDII5ijNDWxYtiG8sk4aqLzUaDanG7aNLBqxYgRtDsIW2geBgHz83gjnP0SaQ7IRxksjfpPoQ6ZLia6B1yToi+k2SfGLYwBGyxIaj3siYqaRHgWdNLDcKiM4A8IUluynVuFWvNbWNYA4B2eQCDBueyW33TocAZ7vsjQeGmIo+GsrvS5R8yxHhSPk4OpG7RB4MumpbZkeEah9iVbmrfuKP2Qkh8D4IIFQDT3QxosZCnxiOQ33Z86rwf7wh2rqOxyMSP/EAflCwkzfkHNwBnj47Zou83jPx30/kjivJwrCcelozAYNhy+PbLHCWfgjBhv0T6ILJi1T2f9qEqmE5U7eO51swo+sDd1oE1Ba0/PUbdhWg97/Hfz8RUKmZ5TDs4kwx0nAOWywsRzud7sH1JLR45BsF5Wh/ZNeT0KZnt+sIRpKfhDlTohfnRXp2lWAuk/FGFHGRTBF2n13pPDZW1NRDK7QpjJy4tgvkp9zGIoJ6EF7btAVrs80C2KVhRyLYlF1FNWHlOOIgzpS1uJf8YHsVjstpLRxT9QJQshA+RCgXKiGIj8GNGh984LEIK2mqosupkfrP+RqnzCBdW9Q242qlajB3l+MJGq+4/iIdhidGWeVT1TIPpPxWL74jLwAwe0ODAynZ1cXxGS2sUgpixNUyNKwHG/awoOwvik4gr9BVLDrDIDbFL2hFyUuu3Azb+oVkv0WeOscuQV6FoO40RK1bxcNUcRseud8ZamrnuXTEh5XPIOSdMuwr3efSwY/NnkEGvvXiKcyzZRN5ePK3mZYHqXbmW7Yqd+/+T6MhOGkd6yQh8wGdluMSSpEIwQw9V5lHGkTObLa+1oOIQNafrdOcuAlY5/CJRPfv//xe6ZK3yhBo4xWiL0KTTS9pTpqpgd2GR1f7GEJ1Dp9LSWDNHGNFw0UH8VC1ymKL7WqlQbynYSrdH7ESXP4CH63lbwlElf0jZXj/7/02SJ/0RoPmiX740rZTcFTMS0AC7M+u6+cGBrehGxr2wf7eHlYBgqvxqD+hsOAZLVQu5nHG8QDDl9XQ1G0XD3KWvuHFhYMQVFxEXtF1beJtLsDayl65f//HrqpjZTMZDLW2ouuaTuBRVoDz+gZBP42X4rozSl9g2fno7wGu+C03VCdYRz5UZRJXb8ugVmp/pLwdqh25o7y06RLXL5D8AgzIxajr1y8SkIE8cH6Ogtd/V2tZZOY64wXaTB6aZVPjI9bLjgPIxUSAtK0AwOtY03dSrBI3m37hmtQuOVuFXzOahA3WL7A+Dg3KTmMjyzYb8RlwI6kPyyC5M08AI8dYUFL3hQHpTa7K5NsWkQNiBJ4REHzHCbIhVQxiSQ1PnUM6owuwGKaBg+JxZsSGURJYC8+m0ADmw3fxDAECXlZkwt83EJdQ308KThS49YnhoSKYbkoO9/zjuApAEg6OeA+5JcbyAgs7fcvBQ4Sw+pv95nc/7O3VpDmR8BkavmINzR+gcSHdVZJ0OZsg5kw2myAlJvRfI+pfj12HVqXXQqRYa0QevqesclFifVNH0cGkHytttaMJDF7BIsZ5KZpEwo9BJARqKZ5Y3o9BI8RYKZqYOY9BIzjVFI2k9btqX5HwRCbeEawGTtKOjliHwG10Hqz0MnvdtFKTmQ6GR9bLSgwKhBS80CpQYwK7xK+W7AFrmpGRtzvZay7EsgiEV10pxGlr/81Zi6zYq3TepW8BU/DbEaxjvkEEd2fk9AYRww0kgjcxdnzdwZLRA+ma2ra7lISaNGRhoX6yZAbp9Jsz0qfOPFoYaa1pXHHsRgiSldKaNAk5sKp24WKtmNvIaICo4frNnlQTxJX6PFbAsFLOlmN6XIuzIqm831yFSQWV9vDyBw41Tsk/iD/zEMSYol4rRsuZG8lLtJKRMR4cjKNOk/KwrF6JVQmdrULlVpAX+aszobAZxc0k3wKxIzWC0H08oFx1vZtYgB5uBYDayRrwsDOpA3sszfzbLyQ4xlBC8aqaPprocr0ukiTodSo7VOhzy7n/L99CaV0agXXp4pE3vaKT6P6/7/+2RZtzL7vLqlYEMwXhAdYqU6eaDdhgF3OpWGoZgxAiHmwSqZgbQVq9EtcFmUxwpWXxTJnNXTKG/1BFy6jJWzZG+QHZS2uCSsVS+J5izXp4GpdZ+q6KSX+VfR1Yk0RjBVPnFoZb8OXmHShD9a1Gevd//Kj2gIDkK8Y8DUXFeih2/UQfKBBXk2r8IWRNdFk8f8LSb8upssyJ8/hr8mPG8J+B38zp7W1QEiETq2EUyNI0QMzbd3KW0Ywr6wooCkF4rQhTbkxZNa3rjyFMZR8Zxd/LCWpTVsaBV6x9WAxl2Zk3XDc8wbZen9dbJaQ+b5S+RrcZ+88b8w4LBTghgkXCU1yyxZAWl7/GiBbVZzNxr/LEtUpoew5Z5WayQAazkrqF9X4Guf9f9mLXJQ7E5xCgWaYBNvH/WIgeZwibzSM6ke1bdi3l6ag0T4s/mVhR4nwiVysHXNXkgokpfhYowoo8+vtf/kOCzfq7vU1y2QT+nxL5hkjFT66ZOhOpgccnkF7+8GMNR+Horbq5fbKe1lGPILvneRok/voxZPdDnTQJP/4VvgfZRMEjJ9/CKB5nFOX/dDmURxMPEMWQaPBvBIM7RIFfhbThrwxP2gMk8tRp43cdRMdTPfCDw5F2grLpyX1FHcpE7evK25PhZok8fvLtXFu1FY/Bl1mCR0pBLMVkK38I8x8/23p6d0Adx2M87RiPmccZj/GV2Hgce5nSl+s19kV0bef/AdYNubo=")).decode('utf-8'))
+namespace fs = std::filesystem;
+
+// ===== PALETA DE CORES STRICT (PRETO E VERMELHO) =====
+const std::string RESET = "\033[0m";
+const std::string BG_BLACK = "\033[40m";
+const std::string BOLD_RED = "\033[1;31m";
+const std::string DARK_RED = "\033[0;31m";
+const std::string WHITE = "\033[1;37m";
+const std::string DARK_GRAY = "\033[1;30m";
+
+// ===== FUNÇÃO PARA EXECUTAR COMANDOS SHELL/ADB =====
+std::string execCommand(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        return "";
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
+
+// ===== LEITURA NATIVA C++ (ANTI-HOOK) =====
+std::string readNativeFile(const std::string& path) {
+    std::ifstream file(path);
+    if (!file.is_open()) return "";
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    return content;
+}
+
+// ===== ENGINE DE RENDERIZAÇÃO (UI) =====
+void printBanner() {
+    std::system("clear || cls");
+    std::cout << BG_BLACK << BOLD_RED
+              << "▄█          ▄██████▄  ████████▄     ▄████████    ▄████████    ▄█   ▄█▄ \n"
+              << "███         ███    ███ ███   ▀███   ███    ███   ███    ███   ███ ▄███▀ \n"
+              << "███         ███    ███ ███    ███   ███    ███   ███    ███   ███▐██▀   \n"
+              << "███         ███    ███ ███    ███   ███    ███  ▄███▄▄▄▄██▀  ▄█████▀    \n"
+              << "███         ███    ███ ███    ███ ▀███████████ ▀▀███▀▀▀▀▀   ▀▀█████▄    \n"
+              << "███         ███    ███ ███    ███   ███    ███ ▀███████████   ███▐██▄   \n"
+              << "███▌    ▄   ███    ███ ███   ▄███   ███    ███   ███    ███   ███ ▀███▄ \n"
+              << "█████▄▄██   ▀██████▀  ████████▀    ███    █▀    ███    ███   ███   ▀█▀ \n"
+              << "▀                                               ███    ███   ▀         \n"
+              << "          [ A D V A N C E D   R O O T   S C A N N E R ]                \n"
+              << RESET << "\n";
+    std::cout << BG_BLACK << DARK_GRAY << "[!] INICIALIZANDO NÚCLEO DE DETECÇÃO...\n" << RESET;
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::system("clear || cls");
+}
+
+void drawBlockHeader(const std::string& title) {
+    std::cout << BG_BLACK << DARK_RED << "████████████████████████████████████████████████████████████████████████████\n";
+    std::cout << BG_BLACK << BOLD_RED << "█ [ " << WHITE << title << BOLD_RED << " ]\n";
+    std::cout << BG_BLACK << DARK_RED << "████████████████████████████████████████████████████████████████████████████\n" << RESET;
+}
+
+void drawItem(const std::string& label, const std::string& value) {
+    std::cout << BG_BLACK << BOLD_RED << "[-] " << DARK_GRAY << label << ": " << WHITE << value << "\n" << RESET;
+}
+
+void drawAlert(const std::string& alert) {
+    std::cout << BG_BLACK << BOLD_RED << "[!] " << alert << "\n" << RESET;
+}
+
+void drawClean(const std::string& msg) {
+    std::cout << BG_BLACK << DARK_GRAY << "[+] " << msg << "\n" << RESET;
+}
+
+void drawSpacing() {
+    std::cout << BG_BLACK << " \n" << RESET;
+}
+
+int main() {
+    printBanner();
+
+    int threat_count = 0;
+    std::vector<std::string> process_logs;
+    std::vector<std::string> detection_logs;
+
+    // --- 1. COLETA DE INFORMAÇÕES DE HARDWARE ---
+    std::string model = execCommand("getprop ro.product.model");
+    std::string android_ver = execCommand("getprop ro.build.version.release");
+    std::string kernel_ver = execCommand("uname -r");
+    
+    if(!model.empty()) model.pop_back();
+    if(!android_ver.empty()) android_ver.pop_back();
+    if(!kernel_ver.empty()) kernel_ver.pop_back();
+
+    drawBlockHeader("HARDWARE & FIRMWARE INTELLIGENCE");
+    drawItem("TARGET DEVICE ", model.empty() ? "DESCONHECIDO" : model);
+    drawItem("OS VERSION    ", android_ver.empty() ? "DESCONHECIDO" : android_ver);
+    drawItem("KERNEL TARGET ", kernel_ver.empty() ? "DESCONHECIDO" : kernel_ver);
+    drawSpacing();
+
+    // --- 2. ANÁLISE DE DAEMONS E PROCESSOS ---
+    std::string ps_output = execCommand("ps -A 2>/dev/null");
+    
+    std::vector<std::pair<std::string, std::string>> signatures = {
+        {"magiskd", "MAGISK DAEMON"},
+        {"ksud", "KERNELSU DAEMON"},
+        {"ksu_next", "KERNELSU NEXT DAEMON"},
+        {"apatchd", "APATCH DAEMON"},
+        {"sukisu", "SUKISU DAEMON (FORK)"},
+        {"suki_", "SUKISU AGENT"},
+        {"zn-zygisk", "ZYGISK NEXT ENGINE"},
+        {"shamiko", "SHAMIKO HIDER PROCESS"},
+        {"trickystore", "TRICKYSTORE INTEGRITY BYPASS"},
+        {"kpm_daemon", "KPM BACKGROUND DAEMON"}
+    };
+
+    for (const auto& sig : signatures) {
+        if (ps_output.find(sig.first) != std::string::npos) {
+            process_logs.push_back("DAEMON ATIVO: " + sig.second + " [" + sig.first + "]");
+            threat_count++;
+        }
+    }
+
+    drawBlockHeader("PROCESSOS COMPROMETIDOS & DAEMONS");
+    if (process_logs.empty()) {
+        drawClean("NENHUM PROCESSO DE ROOT OU DAEMON INJETADO EM EXECUÇÃO.");
+    } else {
+        for (const auto& log : process_logs) {
+            drawAlert(log);
+        }
+    }
+    drawSpacing();
+
+    // --- 3. DETECÇÕES NUCLEARES (KERNEL, SUSFS, KPM, KPIM, .sh) ---
+    std::string filesystems = readNativeFile("/proc/filesystems");
+    if (filesystems.find("susfs") != std::string::npos) {
+        detection_logs.push_back("KERNEL INFILTRATION (SUSFS): Modulo 'susfs' exposto em /proc/filesystems");
+        threat_count++;
+    }
+
+    std::string cmdline = readNativeFile("/proc/cmdline");
+    if (cmdline.find("ksu_susfs") != std::string::npos || cmdline.find("susfs_path") != std::string::npos) {
+        detection_logs.push_back("KERNEL BOOT INJECTION: Parâmetros SUSFS detectados na linha de boot");
+        threat_count++;
+    }
+    
+    std::vector<std::string> check_cmds = {
+        "ls -d /sys/interface/susfs 2>/dev/null",
+        "ls -d /sys/fs/susfs 2>/dev/null",
+        "ls /dev/ksu_susfs 2>/dev/null",
+        "adb shell 'ls -la /data/adb/apatch/kpm/ 2>/dev/null | grep -E \"\\.kpm|\\.kpim\"'",
+        "adb shell 'ls -la /data/adb/kpm/ 2>/dev/null'",
+        "adb shell 'find /data/adb/ -name \"*.kpm\" -o -name \"*.kpim\" 2>/dev/null'",
+        "adb shell 'find /data/adb/modules/ /data/adb/apatch/ /data/adb/ksu/ -name \"*.sh\" 2>/dev/null | grep -iE \"post-fs-data|service\"'"
+    };
+
+    for (const auto& cmd : check_cmds) {
+        std::string result = execCommand(cmd.c_str());
+        if (!result.empty() && result.find("No such file") == std::string::npos) {
+            if(cmd.find("*.kpm") != std::string::npos || cmd.find("*.kpim") != std::string::npos) {
+                detection_logs.push_back("MÓDULO KPM/KPIM IDENTIFICADO -> " + result.substr(0, result.find('\n')));
+                threat_count++;
+            } else if(cmd.find("*.sh") != std::string::npos) {
+                detection_logs.push_back("SCRIPT .SH INJETADO -> " + result.substr(0, result.find('\n')));
+                threat_count++;
+            } else {
+                detection_logs.push_back("ARTEFATO DE KERNEL SUSPEITO LOCALIZADO.");
+                threat_count++;
+            }
+        }
+    }
+
+    drawBlockHeader("MÓDULOS DE KERNEL (KPM/SUSFS) & SCRIPTS INJETADOS");
+    if (detection_logs.empty()) {
+        drawClean("INTEGRIDADE MÁXIMA: NENHUM VETOR DE KERNEL OU HOOK LOCALIZADO.");
+    } else {
+        for (const auto& log : detection_logs) {
+            drawAlert(log);
+        }
+    }
+    drawSpacing();
+
+    // --- 4. RESULTADO GLOBAL E VEREDITO ---
+    drawBlockHeader("VEREDITO DO SISTEMA");
+    if (threat_count > 0) {
+        std::cout << BG_BLACK << BOLD_RED
+                  << "█ STATUS : SISTEMA COMPROMETIDO (ROOT DETECTADO)\n"
+                  << "█ THREATS: " << threat_count << " ANOMALIAS CRÍTICAS ENCONTRADAS\n" << RESET;
+    } else {
+        std::cout << BG_BLACK << DARK_GRAY
+                  << "█ STATUS : LIMPO (SISTEMA 100% SEGURO)\n"
+                  << "█ THREATS: 0 ANOMALIAS\n" << RESET;
+    }
+    drawSpacing();
+
+    // --- CRÉDITOS ---
+    std::cout << BG_BLACK << DARK_GRAY << "Copyright 2026-2027\n";
+    std::cout << BG_BLACK << WHITE << "developers: doutrina king & chapolin\n";
+    std::cout << BG_BLACK << BOLD_RED << "by: Lodark Team\n" << RESET;
+
+    return 0;
+}
