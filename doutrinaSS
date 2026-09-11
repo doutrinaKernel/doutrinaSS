@@ -1,1 +1,442 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
+import subprocess
+import sys
+import time
+import re
+import os
+import zipfile
+from datetime import datetime
+
+try:
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.text import Text
+    from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
+    from rich import box
+except ImportError:
+    print("rich required")
+    sys.exit(1)
+
+console = Console(force_terminal=True)
+
+BLOOD  = "#8B0000"
+BLOOD2 = "#C41E3A"
+GOLD   = "#D4AF37"
+GOLD2  = "#FFD700"
+DIM    = "#4a4a4a"
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+LOGO_PATH  = os.path.join(SCRIPT_DIR, "doutrina_logo.jpg")
+DUMP_DIR   = os.path.join(SCRIPT_DIR, "_doutrina_dump_tmp")
+
+def adb(cmd, timeout=15):
+    full = ["adb", "shell"] + cmd if isinstance(cmd, list) else ["adb", "shell", cmd]
+    try:
+        r = subprocess.run(full, capture_output=True, text=True, timeout=timeout)
+        out = (r.stdout or "") + (r.stderr or "")
+        if any(x in out.lower() for x in ["permission denied", "not found", "inaccessible", "no such file"]):
+            return ""
+        return out
+    except Exception:
+        return ""
+
+def adb_raw(cmd, timeout=10):
+    try:
+        r = subprocess.run(["adb"] + cmd, capture_output=True, text=True, timeout=timeout)
+        return (r.stdout or "") + (r.stderr or "")
+    except Exception:
+        return ""
+
+def check_device():
+    out = adb_raw(["devices"])
+    lines = [l.strip() for l in out.splitlines() if l.strip() and "List of devices" not in l]
+    devs = [l for l in lines if "\tdevice" in l]
+    return len(devs) > 0, devs
+
+def clear_screen():
+    os.system("clear" if os.name != "nt" else "cls")
+    console.clear()
+
+def banner():
+    console.print()
+    t = Text()
+    t.append("  ██████╗  ██████╗ ██╗   ██╗████████╗██████╗ ██╗███╗   ██╗ █████╗ \n", style=f"bold {BLOOD2}")
+    t.append("  ██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝██╔══██╗██║████╗  ██║██╔══██╗\n", style=f"bold {BLOOD}")
+    t.append("  ██║  ██║██║   ██║██║   ██║   ██║   ██████╔╝██║██╔██╗ ██║███████║\n", style=f"bold {BLOOD2}")
+    t.append("  ██║  ██║██║   ██║██║   ██║   ██║   ██╔══██╗██║██║╚██╗██║██╔══██║\n", style=f"bold {BLOOD}")
+    t.append("  ██████╔╝╚██████╔╝╚██████╔╝   ██║   ██║  ██║██║██║ ╚████║██║  ██║\n", style=f"bold {BLOOD2}")
+    t.append("  ╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝\n", style=f"bold {BLOOD}")
+    console.print(t)
+    sub = Text()
+    sub.append("                         S S   -   6 6 6", style=f"bold {GOLD}")
+    console.print(sub)
+    console.print(Text("                    kernel · patch · shadow", style=DIM))
+    console.print()
+
+def section(title):
+    console.print(Panel(Text(title, style=f"bold {GOLD}"), border_style=BLOOD, box=box.HEAVY, padding=(0, 1)))
+
+def hit(msg, level="CRIT"):
+    if level == "CRIT":
+        console.print(f"  [{BLOOD2}]◆[/{BLOOD2}] [{GOLD}]{msg}[/{GOLD}]")
+    elif level == "WARN":
+        console.print(f"  [{GOLD}]◇[/{GOLD}] [{BLOOD2}]{msg}[/{BLOOD2}]")
+    else:
+        console.print(f"  [{DIM}]·[/{DIM}] {msg}")
+
+def clean(msg):
+    console.print(f"  [{DIM}]○[/{DIM}] {msg}")
+
+def ensure_chafa():
+    """instala chafa automaticamente se não existir (Termux)"""
+    try:
+        r = subprocess.run(["chafa", "--version"], capture_output=True, timeout=5)
+        if r.returncode == 0:
+            return True
+    except Exception:
+        pass
+
+    console.print(Text("  instalando chafa...", style=DIM))
+    try:
+        r = subprocess.run(
+            ["pkg", "install", "-y", "chafa"],
+            capture_output=True, text=True, timeout=120
+        )
+        if r.returncode == 0:
+            return True
+    except Exception:
+        pass
+
+    try:
+        r = subprocess.run(
+            ["apt", "install", "-y", "chafa"],
+            capture_output=True, text=True, timeout=120
+        )
+        if r.returncode == 0:
+            return True
+    except Exception:
+        pass
+
+    return False
+
+def show_logo():
+    if not os.path.isfile(LOGO_PATH):
+        console.print(Text(f"  [logo não encontrada: {LOGO_PATH}]", style=DIM))
+        return
+
+    ensure_chafa()
+
+    attempts = [
+        ["chafa", "--size", "40x", "--symbols", "block", "--colors", "256", LOGO_PATH],
+        ["chafa", "-s", "40", "--symbols", "block", LOGO_PATH],
+        ["chafa", "-s", "40", LOGO_PATH],
+        ["chafa", LOGO_PATH],
+        ["timg", "-g", "40x28", LOGO_PATH],
+        ["viu", "-w", "40", LOGO_PATH],
+    ]
+    for cmd in attempts:
+        try:
+            r = subprocess.run(cmd, capture_output=True, timeout=10)
+            if r.returncode == 0 and (r.stdout or r.stderr):
+                data = r.stdout if r.stdout else r.stderr
+                sys.stdout.buffer.write(data)
+                sys.stdout.buffer.flush()
+                console.print()
+                return
+        except FileNotFoundError:
+            continue
+        except Exception:
+            continue
+
+    console.print(Text("  [não foi possível exibir a logo]", style=DIM))
+
+# ─── coleta de dumps para o .zip ─────────────────────────────
+
+def collect_dumps():
+    os.makedirs(DUMP_DIR, exist_ok=True)
+    files = []
+
+    dumps = {
+        "01_top.txt":            "top -b -n 1",
+        "02_ps_A.txt":           "ps -A",
+        "03_cpuinfo.txt":        "dumpsys cpuinfo",
+        "04_batterystats.txt":   "dumpsys batterystats",
+        "05_meminfo.txt":        "dumpsys meminfo",
+        "06_activity.txt":       "dumpsys activity activities",
+        "07_package_folk.txt":   "dumpsys package me.yuki.folk",
+        "08_getprop.txt":        "getprop",
+        "09_uname.txt":          "uname -a",
+        "10_cmdline.txt":        "cat /proc/cmdline",
+        "11_events_su.txt":      "logcat -d -b events -t 500",
+        "12_packagemanager.txt": "logcat -d -t 300 PackageManager:W *:S",
+    }
+
+    for fname, cmd in dumps.items():
+        data = adb(cmd, timeout=20)
+        path = os.path.join(DUMP_DIR, fname)
+        with open(path, "w", encoding="utf-8", errors="replace") as f:
+            f.write(data if data else "(empty / restricted)\n")
+        files.append(path)
+
+    root_filter = adb("dumpsys batterystats | grep -E 'Proc (apd|su|inotifyd|ssh|kikiw|magisk|apatch)' || true")
+    path = os.path.join(DUMP_DIR, "13_root_procs_filter.txt")
+    with open(path, "w", encoding="utf-8", errors="replace") as f:
+        f.write(root_filter if root_filter else "(nenhum match)\n")
+    files.append(path)
+
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    zip_name = os.path.join(SCRIPT_DIR, f"doutrina_root_dump_{stamp}.zip")
+    with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as z:
+        for p in files:
+            z.write(p, os.path.basename(p))
+
+    for p in files:
+        try:
+            os.remove(p)
+        except Exception:
+            pass
+    try:
+        os.rmdir(DUMP_DIR)
+    except Exception:
+        pass
+
+    return zip_name
+
+# ─── detectors ───────────────────────────────────────────────
+
+def scan_packages():
+    found = []
+    targets = [
+        "me.yuki.folk",
+        "me.bmax.apatch",
+        "me.bmax.apatch.ui",
+        "com.apatch",
+    ]
+    pkgs = adb("pm list packages -f")
+    for t in targets:
+        if t in pkgs:
+            found.append(t)
+            hit(f"package present → {t}", "CRIT")
+
+    act = adb("dumpsys activity activities")
+    if "me.yuki.folk" in act or "FolkPatch" in act or "me.bmax.apatch" in act:
+        hit("activity residue → FolkPatch / APatch", "CRIT")
+        found.append("activity_residue")
+
+    logp = adb("logcat -d -t 200 PackageManager:W *:S")
+    if "me.yuki.folk" in logp and "Missing required system package" in logp:
+        hit("PackageManager extended search hit (me.yuki.folk)", "CRIT")
+        found.append("pm_warning")
+
+    if not found:
+        clean("no known patch manager packages")
+    return found
+
+def scan_kernel():
+    found = []
+    uname = adb("uname -a")
+    if uname.strip():
+        console.print(f"  [{DIM}]kernel[/{DIM}] {uname.strip()[:90]}")
+
+    cmdl = adb("cat /proc/cmdline")
+    if "kpti=off" in cmdl:
+        hit("cmdline kpti=off", "CRIT")
+        found.append("kpti_off")
+
+    dmesg = adb("dmesg -T 2>/dev/null | tail -n 400")
+    if not dmesg:
+        dmesg = adb("cat /proc/kmsg 2>/dev/null | tail -n 200")
+
+    kp_hits = re.findall(r"\[?\+\]?\s*KP\s+I\s+commit_common_su", dmesg)
+    if kp_hits:
+        hit(f"dmesg KP commit_common_su ×{len(kp_hits)}", "CRIT")
+        found.append("kp_su")
+
+    if "selinux_hook" in dmesg and ("security_setprocattr" in dmesg or "selinux_setprocattr" in dmesg):
+        hit("selinux_hook activity detected", "CRIT")
+        found.append("selinux_hook")
+
+    if not found:
+        clean("kernel surface clean (or restricted)")
+    return found
+
+def scan_procs():
+    found = []
+    top    = adb("top -b -n 1")
+    cpu    = adb("dumpsys cpuinfo")
+    batt   = adb("dumpsys batterystats")
+    events = adb("logcat -d -b events -t 400")
+
+    if re.search(r"\bapd\b", top) or re.search(r"\bapd\b", cpu) or "Proc apd:" in batt:
+        hit("process leak → apd", "CRIT")
+        found.append("apd")
+
+    if "ssh.sh" in top or "ssh.sh" in events:
+        hit("process leak → ssh.sh", "CRIT")
+        found.append("ssh.sh")
+
+    if "PhantomProcessRecord" in events and re.search(r":su/\d+", events):
+        hit("PhantomProcessRecord su", "CRIT")
+        found.append("su_phantom")
+
+    if "Proc kikiw:" in batt:
+        hit("historical → Proc kikiw", "WARN")
+        found.append("kikiw")
+
+    for name in ["apd", "ssh.sh"]:
+        if re.search(rf",{name},", events) or re.search(rf"\b{name}\b", events):
+            if name not in found:
+                hit(f"am_cpu event → {name}", "CRIT")
+                found.append(name)
+
+    if "apd" in found and "su_phantom" in found:
+        hit("pid correlation apd ↔ su", "CRIT")
+
+    if re.search(r"\binotifyd\b", top) and "Proc inotifyd:" in batt:
+        if found:
+            hit("inotifyd residual (contexto root)", "WARN")
+            found.append("inotifyd")
+
+    if "Proc su:" in batt and ("su_phantom" in found or "apd" in found):
+        hit("batterystats → Proc su (correlacionado)", "CRIT")
+        found.append("su_batt")
+
+    if not found:
+        clean("no root process residue")
+    return found
+
+def scan_hide():
+    found = []
+    ps  = adb("ps -A")
+    top = adb("top -b -n 1")
+    for name in ["apd", "ssh.sh", "kikiw"]:
+        if name in top and name not in ps:
+            hit(f"hide signature → {name} (top sim / ps não)", "CRIT")
+            found.append(f"hide_{name}")
+    if not found:
+        clean("no hide discrepancy observed")
+    return found
+
+def scan_boot():
+    props = adb("getprop")
+    locked = []
+    for key in ["ro.boot.flash.locked", "ro.boot.vbmeta.device_state",
+                "ro.boot.verifiedbootstate", "sys.oem_unlock_allowed"]:
+        m = re.search(rf"\[{re.escape(key)}\]:\s*\[([^\]]+)\]", props)
+        if m:
+            locked.append(f"{key}={m.group(1)}")
+    if locked:
+        console.print(f"  [{DIM}]boot[/{DIM}] " + " | ".join(locked))
+    return []
+
+def scan_extra():
+    found = []
+    artd = adb("logcat -d -t 100 artd:I *:S")
+    if "me.yuki.folk" in artd and "base.odex" in artd:
+        hit("artd odex residue → me.yuki.folk", "CRIT")
+        found.append("artd_odex")
+    return found
+
+# ─── final ───────────────────────────────────────────────────
+
+def final_block(all_hits, zip_path=None):
+    console.print()
+    section("VEREDITO")
+
+    if not all_hits:
+        console.print(Text("  dispositivo limpo", style=f"bold {GOLD}"))
+        console.print(Text("  nenhum indício de root ou patch de kernel encontrado", style=DIM))
+    else:
+        console.print(Text("  indícios de root / modificações detectados", style=f"bold {BLOOD2}"))
+        console.print(Text(f"  sinais : {len(set(all_hits))}", style=GOLD))
+        for s in sorted(set(all_hits)):
+            console.print(f"  [{BLOOD2}]›[/{BLOOD2}] {s}")
+
+    if zip_path and os.path.isfile(zip_path):
+        console.print()
+        console.print(Text(f"  dump gerado → {os.path.basename(zip_path)}", style=DIM))
+
+    console.print()
+    aviso = Text()
+    aviso.append("AVISO: ", style=f"bold {BLOOD2}")
+    aviso.append('" scanner feito para a facilitação em análises de Android com suspeita de Roots ou modificações a nível Kernel, scanner feito com o básico / intermediário de Root"', style=GOLD)
+    console.print(aviso)
+    console.print()
+    console.print(Text("CREATOR SCANNER: doutrinaking", style=DIM))
+    console.print(Text("GITHUB: doutrinaKernel", style=DIM))
+    console.print()
+    console.print(Text("Copyright © 2026 - 2028 doutrinaking. All rights reserved.", style=f"bold {GOLD}"))
+    console.print()
+    show_logo()
+
+# ─── main ────────────────────────────────────────────────────
+
+def main():
+    clear_screen()
+    banner()
+
+    ok, devs = check_device()
+    if not ok:
+        console.print(Panel(Text("no device / unauthorized", style=f"bold {BLOOD2}"),
+                            border_style=BLOOD, box=box.HEAVY))
+        final_block([])
+        return
+
+    console.print(Text(f"  device linked · {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", style=DIM))
+    console.print()
+
+    all_hits = []
+    zip_path = None
+
+    with Progress(
+        SpinnerColumn(style=BLOOD2),
+        TextColumn("[bold]{task.description}"),
+        BarColumn(bar_width=28, style=BLOOD, complete_style=GOLD),
+        console=console,
+        transient=True,
+    ) as prog:
+
+        t0 = prog.add_task("coletando dumps", total=1)
+        zip_path = collect_dumps()
+        prog.update(t0, advance=1)
+        time.sleep(0.1)
+
+        t1 = prog.add_task("packages", total=1)
+        all_hits.extend(scan_packages())
+        prog.update(t1, advance=1)
+        time.sleep(0.12)
+
+        t2 = prog.add_task("kernel surface", total=1)
+        all_hits.extend(scan_kernel())
+        prog.update(t2, advance=1)
+        time.sleep(0.12)
+
+        t3 = prog.add_task("process residue", total=1)
+        all_hits.extend(scan_procs())
+        prog.update(t3, advance=1)
+        time.sleep(0.12)
+
+        t4 = prog.add_task("hide / discrepancy", total=1)
+        all_hits.extend(scan_hide())
+        prog.update(t4, advance=1)
+        time.sleep(0.12)
+
+        t5 = prog.add_task("boot props", total=1)
+        scan_boot()
+        prog.update(t5, advance=1)
+        time.sleep(0.08)
+
+        t6 = prog.add_task("extra surface", total=1)
+        all_hits.extend(scan_extra())
+        prog.update(t6, advance=1)
+
+    final_block(all_hits, zip_path)
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        console.print("\n[interrupted]")
+        final_block([])
