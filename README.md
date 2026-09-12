@@ -1,48 +1,52 @@
 <div align="center">
 
   <!-- Foto -->
-  <img src="./37b1c4c70813cf396496b7161a0b75bd%20(2).jpg" width="300" style="border-radius: 16px; border: 2px solid #1a1a1a; box-shadow: 0 0 25px rgba(255,255,255,0.08);"/>
+  <img src="./doutrina.jpg" width="280" style="border-radius: 12px; border: 1px solid #2a2a2a; box-shadow: 0 4px 20px rgba(0,0,0,0.4);"/>
 
   <br><br>
 
-  <!-- Nome animado -->
-  <a href="https://git.io/typing-svg">
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=32&duration=3000&pause=1000&color=FFFFFF&center=true&vCenter=true&width=500&lines=%E2%8A%B9+doutrina+%E2%8A%B9;%E2%8A%B9+C++%20%7C%20Python%20%7C%20C%20%7C%20C%23+%E2%8A%B9" alt="Typing SVG">
-  </a>
+  <!-- Nome -->
+  <h2 style="color: #e0e0e0; font-family: 'Fira Code', monospace; letter-spacing: 1px;">
+    doutrinaking
+  </h2>
+
+  <!-- Linha sutil -->
+  <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="380">
 
   <br><br>
 
-  <!-- Linha decorativa -->
-  <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="450">
+  <!-- Apresentação -->
+  <p align="center" style="max-width: 620px; color: #c0c0c0; font-size: 15px; line-height: 1.6;">
+    Sou o <strong>doutrinaking</strong>, um analista profissional em sistemas Android com hiperfoco em detecção de processos e módulos Root a nível kernel, como KPM, entre outros. Criador de ferramentas que auxiliam na leitura de integridade do dispositivo em questão de Root.
+  </p>
 
-  <br><br>
+  <br>
 
   <!-- Linguagens -->
-  <h3 align="center">
-    <img src="https://cdn-icons-png.flaticon.com/512/2920/2920277.png" width="32" height="32" alt="PC"/>
-    &nbsp;Linguagens
+  <h3 style="color: #aaaaaa; font-size: 16px; letter-spacing: 1px;">
+    LINGUAGENS
   </h3>
 
   <p align="center">
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" height="50" alt="C++"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" height="42" alt="C++"/>
     &nbsp;&nbsp;&nbsp;
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" height="50" alt="Python"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" height="42" alt="Python"/>
     &nbsp;&nbsp;&nbsp;
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" height="50" alt="C"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" height="42" alt="C"/>
     &nbsp;&nbsp;&nbsp;
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" height="50" alt="C#"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" height="42" alt="C#"/>
   </p>
 
   <br>
 
   <!-- Discord -->
   <a href="https://discord.com/users/doutrinaking">
-    <img src="https://img.shields.io/badge/Discord-doutrinaking-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=111111" alt="Discord"/>
+    <img src="https://img.shields.io/badge/Discord-doutrinaking-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=0d0d0d" alt="Discord"/>
   </a>
 
   <br><br>
 
   <!-- Linha final -->
-  <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="450">
+  <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="380">
 
 </div>
