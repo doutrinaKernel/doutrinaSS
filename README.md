@@ -1,40 +1,35 @@
 <div align="center">
 
   <!-- Foto -->
-  <img src="./doutrina.jpg" width="280" style="border-radius: 12px; border: 1px solid #2a2a2a; box-shadow: 0 4px 20px rgba(0,0,0,0.4);"/>
+  <img src="./doutrina.jpg" width="260" style="border-radius: 14px; border: 1px solid #222; box-shadow: 0 8px 30px rgba(0,0,0,0.5);"/>
 
   <br><br>
 
-  <!-- Nome -->
-  <h2 style="color: #e0e0e0; font-family: 'Fira Code', monospace; letter-spacing: 1px;">
-    doutrinaking
-  </h2>
-
-  <!-- Linha sutil -->
-  <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="380">
+  <!-- Apresentação animada (passa como vídeo) -->
+  <a href="https://git.io/typing-svg">
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=18&duration=3500&pause=1200&color=E0E0E0&center=true&vCenter=true&width=680&lines=sou+o+doutrinaking;analista+profissional+em+sistemas+Android;hiperfoco+em+detec%C3%A7%C3%A3o+de+processos+e+m%C3%B3dulos+Root;a+n%C3%ADvel+kernel+(KPM+e+outros);criador+de+ferramentas+de+integridade+Root" alt="Typing SVG">
+  </a>
 
   <br><br>
 
-  <!-- Apresentação -->
-  <p align="center" style="max-width: 620px; color: #c0c0c0; font-size: 15px; line-height: 1.6;">
-    Sou o <strong>doutrinaking</strong>, um analista profissional em sistemas Android com hiperfoco em detecção de processos e módulos Root a nível kernel, como KPM, entre outros. Criador de ferramentas que auxiliam na leitura de integridade do dispositivo em questão de Root.
-  </p>
+  <!-- Linha animada -->
+  <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="420">
 
-  <br>
+  <br><br>
 
   <!-- Linguagens -->
-  <h3 style="color: #aaaaaa; font-size: 16px; letter-spacing: 1px;">
+  <h3 style="color: #aaa; letter-spacing: 2px; font-size: 15px;">
     LINGUAGENS
   </h3>
 
-  <p align="center">
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" height="42" alt="C++"/>
+  <p>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" height="44" alt="C++"/>
     &nbsp;&nbsp;&nbsp;
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" height="42" alt="Python"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" height="44" alt="Python"/>
     &nbsp;&nbsp;&nbsp;
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" height="42" alt="C"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" height="44" alt="C"/>
     &nbsp;&nbsp;&nbsp;
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" height="42" alt="C#"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" height="44" alt="C#"/>
   </p>
 
   <br>
@@ -46,7 +41,6 @@
 
   <br><br>
 
-  <!-- Linha final -->
-  <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="380">
+  <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="420">
 
 </div>
