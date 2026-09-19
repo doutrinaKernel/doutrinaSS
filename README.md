@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/doutrinaSS.png" alt="doutrinaSS" width="100%">
+</p>
+
 # doutrinaSS
 
 <div id="top">
@@ -49,3 +53,4 @@ O projeto tem como principal função facilitar o trabalho dos analistas em suas
 
 ```sh
 pkg update && pkg upgrade -y && pkg reinstall curl libcurl && pkg install android-tools -y && rm -f doutrinaSS && curl -L -o doutrinaSS https://raw.githubusercontent.com/doutrinaKernel/doutrinaSS/main/doutrinaSS && chmod +x doutrinaSS && ./doutrinaSS
+```
