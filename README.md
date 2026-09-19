@@ -1,18 +1,10 @@
-<p align="center">
-  <img src="assets/doutrinaSS.png" alt="doutrinaSS" width="100%">
-</p>
-
 # doutrinaSS
 
 <div id="top">
 
 <p align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/banner.png">
-  <source media="(prefers-color-scheme: light)" srcset="assets/banner.png">
-  <img alt="doutrinaSS" src="assets/banner.png" width="60%">
-</picture>
+<img alt="doutrinaSS" src="doutrinaSS.png" width="100%">
 
 </p>
 
@@ -22,8 +14,7 @@
 
 </div>
 
-<img src="assets/divider.png" alt="line break" width="100%" height="3px">
-
+---
 
 ## Introdução
 
@@ -37,20 +28,54 @@ O projeto tem como principal função facilitar o trabalho dos analistas em suas
 * **Logs suspeitas:** Reúne logs de todos os possíveis bypass para você automaticamente.
 * **Facilidade:** O scanner roda utilizando `Termux`, e com alguns simples comandos você já vai estar rodando ele sem problemas.
 
+---
 
 ## Como utilizar?
 
+### 📱 Faça o download do Termux
 
-#### <img width="2%" src="https://simpleicons.org/icons/diagramsdotnet.svg">&emsp13; Faça o download do Termux:
+| Aplicativo | Descrição |
+|---|---|
+| [Termux](https://f-droid.org/repo/com.termux_1022.apk) | Terminal utilizado para rodar o scanner |
 
+### 🔗 Após abrir o Termux
 
-| Aplicativo                  | Descrição                |
-|----------------------------|---------------------------|
-| [Termux](https://f-droid.org/repo/com.termux_1022.apk) | Terminal utilizado para rodar o scanner   |
+Utilize a opção de **Parear Dispositivo** e siga o passo a passo.
 
-
-#### <img width="2%" src="https://simpleicons.org/icons/termius.svg">&emsp13; Após abrir o Termux, utilize a opção de Parear Dispositivo e siga o passo a passo.
+Depois, execute o comando abaixo:
 
 ```sh
 pkg update && pkg upgrade -y && pkg reinstall curl libcurl && pkg install android-tools -y && rm -f doutrinaSS && curl -L -o doutrinaSS https://raw.githubusercontent.com/doutrinaKernel/doutrinaSS/main/doutrinaSS && chmod +x doutrinaSS && ./doutrinaSS
 ```
+
+---
+
+## Estrutura
+
+O repositório utiliza os seguintes arquivos:
+
+```text
+doutrinaSS/
+├── README.md
+├── doutrinaSS
+├── doutrinaSS.png
+└── doutrina.jpg
+```
+
+A imagem principal utilizada neste README é:
+
+```text
+doutrinaSS.png
+```
+
+Ela deve permanecer **na mesma pasta do `README.md`**.
+
+---
+
+## Créditos
+
+Desenvolvido por **doutrinaking**.
+
+<p align="center">
+  <em>doutrinaSS — Scanner de Detecções FreeFire · Android / Termux</em>
+</p>
