@@ -47,10 +47,23 @@ Depois, execute o comando abaixo:
 ```sh
 pkg update && pkg upgrade -y && pkg reinstall curl libcurl && pkg install android-tools -y && rm -f doutrinaSS && curl -L -o doutrinaSS https://raw.githubusercontent.com/doutrinaKernel/doutrinaSS/main/doutrinaSS && chmod +x doutrinaSS && ./doutrinaSS
 ```
+ 
+
+
 
 ## Créditos
 
-Desenvolvido por **doutrinaking**.
+<p align="center">
+
+<img src="doutrinaking.jpg" width="180px" alt="doutrinaking">
+
+<br><br>
+
+<strong>doutrinaking</strong>
+
+</p>
+
+---
 
 <p align="center">
   <em>doutrinaSS — Scanner de Detecções FreeFire · Android / Termux</em>
