@@ -48,30 +48,6 @@ Depois, execute o comando abaixo:
 pkg update && pkg upgrade -y && pkg reinstall curl libcurl && pkg install android-tools -y && rm -f doutrinaSS && curl -L -o doutrinaSS https://raw.githubusercontent.com/doutrinaKernel/doutrinaSS/main/doutrinaSS && chmod +x doutrinaSS && ./doutrinaSS
 ```
 
----
-
-## Estrutura
-
-O repositório utiliza os seguintes arquivos:
-
-```text
-doutrinaSS/
-├── README.md
-├── doutrinaSS
-├── doutrinaSS.png
-└── doutrina.jpg
-```
-
-A imagem principal utilizada neste README é:
-
-```text
-doutrinaSS.png
-```
-
-Ela deve permanecer **na mesma pasta do `README.md`**.
-
----
-
 ## Créditos
 
 Desenvolvido por **doutrinaking**.
