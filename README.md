@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <em>Pensado e realizado em prol da comunidade de FreeFire, por doutrinaking.</em>
+  <em>Projeto feito com o foco em facilitar analises de ScreenShares mobiles,  créditos doutrinaking.</em>
 </p>
 
 </div>
