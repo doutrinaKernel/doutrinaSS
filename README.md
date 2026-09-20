@@ -20,7 +20,7 @@
 
 doutrinaSS é um scanner para dispositivos Android que tem o objetivo de reunir logs e arquivos suspeitos em questão de segundos de utilização.
 
-**Por que usar o doutrinaSS?**
+**Por que usar o doutrina SS?**
 
 O projeto tem como principal função facilitar o trabalho dos analistas em suas telagens, que contém várias funções, como:
 
