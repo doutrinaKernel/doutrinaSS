@@ -75,6 +75,9 @@ pkg update && pkg upgrade -y && pkg reinstall curl libcurl && pkg install androi
 ```
  
 
+<div align="center">
+  <img src="./golang.png" alt="Codado em Go ARM64" width="700">
+</div>
 
 
 ## Créditos
