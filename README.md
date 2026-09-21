@@ -53,11 +53,7 @@
 | `Arquivos` | Detecta arquivos suspeitos |
 
 
-## AVISO ⚠️
 
-* **Possivel falso positivo em processos como su no path e processos root como [ monkey | svc | toybox ] esses falsos positivos foi identificado no android 16 ( Samsung ) recomendamos a analise manual apos rodar o Scanner**
-
-  
 ---
 
 ## Como utilizar o scanner?
