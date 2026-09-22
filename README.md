@@ -18,7 +18,7 @@
 
 ## **Introdução**
 
-**doutrinaSS é um scanner para dispositivos Android que tem o objetivo de coletar evidências e arquivos suspeitos em questão de segundos  utilização para facilitar a vida do ScreenShare.**
+**doutrinaSS é um scanner para dispositivos Android que tem o objetivo de coletar evidências e arquivos suspeitos em questão de segundos de utilização para facilitar a vida do ScreenShare.**
 
 
 **Por que usar o doutrina SS?**
