@@ -105,7 +105,7 @@ pkg update && pkg upgrade -y && pkg reinstall curl libcurl && pkg install androi
 </a>
 
 <a href="https://discord.gg/bemloko" target="_blank">
-  <img src="https://img.shields.io/badge/_BK_Team-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="KAZE BYPASS">
+  <img src="https://img.shields.io/badge/🔎_BK_Team-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="BK Team">
 </a>
 </p>
 
