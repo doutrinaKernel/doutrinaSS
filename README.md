@@ -89,7 +89,7 @@ pkg update && pkg upgrade -y && pkg reinstall curl libcurl && pkg install androi
 
 <br><br>
 
-<strong>doutrinaking</strong>
+<strong>doutrinaking • BK Team</strong>
 
 
 <a href="https://discord.com/users/doutrinaking" target="_blank">
