@@ -85,11 +85,11 @@ pkg update && pkg upgrade -y && pkg reinstall curl libcurl && pkg install androi
 <p align="center">
 
 <a href="https://discord.gg/bemloko" target="_blank">     
-<img src="doutrinaking.jpg" width="200px" alt="doutrinaking"> 
+<img src="doutrinaking.jpg" width="268px" alt="doutrinaking"> 
 
 
    
-<img src="BK_Team.png" width="185px" alt="BK Team">
+<img src="BK_Team.png" width="186px" alt="BK Team">
 
 
 <br><br>
